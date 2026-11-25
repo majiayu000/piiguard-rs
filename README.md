@@ -1,6 +1,6 @@
 # piiguard-rs
 
-面向 LLM 网关热路径的 PII 检测与可逆脱敏 Rust 库 + CLI（v0.1，仅本地开发，未发布）。
+面向 LLM 网关热路径的 PII 检测与可逆脱敏 Rust 库 + CLI（v0.1，尚未发布到 crates.io）。
 
 - **低误报**：正则只负责找候选，再过校验位（Luhn、IBAN mod-97、GB 11643、GB 32100）、号段/日期/区划码校验，以及命中前 32 个字符内的上下文词加分。
 - **可逆脱敏**：`Pseudonymize` 把 PII 换成 `<EMAIL_1>` 这样的占位符，映射存在 `Vault`；模型响应回来后用 `restore` 换回原值。
