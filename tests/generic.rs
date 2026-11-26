@@ -126,3 +126,17 @@ fn url_token_short_value_misses() {
 fn url_token_lookalikes_miss() {
     assert_none("/search?page=2&sort=desc&tokenizer=bpe&max_tokens=1024");
 }
+
+#[test]
+fn ip_after_version_field_is_suppressed() {
+    assert_none("ver=2.10.7.180 path=/v1");
+    assert_none("版本 9.4.8.67 已发布");
+    assert_single("server 10.2.3.4 down", "IP_ADDRESS", "10.2.3.4");
+}
+
+#[test]
+fn card_after_order_field_is_suppressed() {
+    let v = visa();
+    assert_none(&format!("order={v} latency_ms=3"));
+    assert_none(&format!("订单号 {v}"));
+}

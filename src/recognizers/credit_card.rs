@@ -1,3 +1,4 @@
+use super::{ID_FIELD_PENALTY, ID_FIELD_WORDS};
 use super::{PatternRecognizer, strip_separators};
 use crate::checksum::luhn_valid;
 
@@ -45,5 +46,6 @@ fn validate(s: &str) -> Option<f32> {
 pub fn recognizer() -> Result<PatternRecognizer, regex::Error> {
     Ok(PatternRecognizer::new("CREDIT_CARD", CARD_PATTERN, 0.7)?
         .validator(validate)
-        .context(CONTEXT, 0.25))
+        .context(CONTEXT, 0.25)
+        .negative_context(ID_FIELD_WORDS, ID_FIELD_PENALTY))
 }

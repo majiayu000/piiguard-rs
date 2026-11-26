@@ -1,0 +1,911 @@
+{
+  "corpus": {
+    "labeled_docs": 4000,
+    "clean_docs": 2510
+  },
+  "tools": {
+    "cloakpipe": {
+      "load_ms": 4.169959,
+      "max_rss_mb": 26.7,
+      "perf_labeled": {
+        "mb_s": 6.5,
+        "p50_us": 20.2,
+        "p99_us": 58.3,
+        "panics": 0,
+        "timed": "per-doc"
+      },
+      "perf_clean": {
+        "mb_s": 56.38,
+        "p50_us": 21.1,
+        "p99_us": 66.9,
+        "panics": 0,
+        "timed": "per-doc"
+      },
+      "accuracy": {
+        "per_entity": {
+          "EMAIL": {
+            "p": 1.0,
+            "r": 1.0,
+            "f1": 1.0,
+            "gold": 1531,
+            "pred": 1531
+          },
+          "CREDIT_CARD": null,
+          "IBAN": null,
+          "IP_ADDRESS": {
+            "p": 0.9235474006116208,
+            "r": 0.7626262626262627,
+            "f1": 0.8354080221300139,
+            "gold": 1188,
+            "pred": 981
+          },
+          "US_SSN": {
+            "p": 1.0,
+            "r": 0.49676584734799484,
+            "f1": 0.6637856525496976,
+            "gold": 773,
+            "pred": 384
+          },
+          "PHONE": {
+            "p": 0.22644907146876758,
+            "r": 0.9990069513406157,
+            "f1": 0.36920818423708596,
+            "gold": 2014,
+            "pred": 8885
+          },
+          "CN_ID_CARD": null,
+          "CN_USCC": null,
+          "CN_BANK_CARD": null
+        },
+        "micro_supported": {
+          "p": 0.4102368220015279,
+          "r": 0.8777697057755176,
+          "f1": 0.5591484930872911
+        },
+        "other_type_preds": {
+          "Custom(\"AADHAAR\")": 964,
+          "Date": 7
+        }
+      },
+      "clean_fp": {
+        "all_types": 34732,
+        "eval_types": 23550,
+        "top": {
+          "PhoneNumber": 22115,
+          "Date": 11173,
+          "IpAddress": 1435,
+          "Percentage": 9
+        }
+      }
+    },
+    "llm-pii-redact": {
+      "load_ms": 2.394083,
+      "max_rss_mb": 25.0,
+      "perf_labeled": {
+        "mb_s": 10.73,
+        "p50_us": 12.1,
+        "p99_us": 39.7,
+        "panics": 0,
+        "timed": "per-doc"
+      },
+      "perf_clean": {
+        "mb_s": 65.69,
+        "p50_us": 18.4,
+        "p99_us": 57.0,
+        "panics": 0,
+        "timed": "per-doc"
+      },
+      "accuracy": {
+        "per_entity": {
+          "EMAIL": {
+            "p": 1.0,
+            "r": 1.0,
+            "f1": 1.0,
+            "gold": 1531,
+            "pred": 1531
+          },
+          "CREDIT_CARD": {
+            "p": 0.845575221238938,
+            "r": 1.0,
+            "f1": 0.9163270198993047,
+            "gold": 681,
+            "pred": 2260
+          },
+          "IBAN": {
+            "p": 0.5333333333333333,
+            "r": 0.5089058524173028,
+            "f1": 0.5208333333333333,
+            "gold": 393,
+            "pred": 375
+          },
+          "IP_ADDRESS": {
+            "p": 0.9406175771971497,
+            "r": 1.0,
+            "f1": 0.9694002447980417,
+            "gold": 1188,
+            "pred": 1263
+          },
+          "US_SSN": {
+            "p": 1.0,
+            "r": 1.0,
+            "f1": 1.0,
+            "gold": 773,
+            "pred": 773
+          },
+          "PHONE": {
+            "p": 0.6889111891620673,
+            "r": 0.6817279046673287,
+            "f1": 0.6853007237334664,
+            "gold": 2014,
+            "pred": 1993
+          },
+          "CN_ID_CARD": null,
+          "CN_USCC": null,
+          "CN_BANK_CARD": null
+        },
+        "micro_supported": {
+          "p": 0.8512507626601586,
+          "r": 0.8732522796352583,
+          "f1": 0.8621111715115138
+        },
+        "other_type_preds": {}
+      },
+      "clean_fp": {
+        "all_types": 8224,
+        "eval_types": 8177,
+        "top": {
+          "PHONE_US": 4996,
+          "CREDIT_CARD": 1465,
+          "IP_V4": 1435,
+          "SSN": 259,
+          "URL": 47,
+          "IP_V6": 22
+        }
+      }
+    },
+    "pii-vault": {
+      "load_ms": 21.608417000000003,
+      "max_rss_mb": 44.0,
+      "perf_labeled": {
+        "mb_s": 1.38,
+        "p50_us": 84.8,
+        "p99_us": 286.2,
+        "panics": 1150,
+        "timed": "per-doc"
+      },
+      "perf_clean": {
+        "mb_s": 7.95,
+        "p50_us": 145.0,
+        "p99_us": 489.1,
+        "panics": 0,
+        "timed": "per-doc"
+      },
+      "accuracy": {
+        "per_entity": {
+          "EMAIL": {
+            "p": 1.0,
+            "r": 0.5878510777269759,
+            "f1": 0.7404360345536817,
+            "gold": 1531,
+            "pred": 900
+          },
+          "CREDIT_CARD": {
+            "p": 0.9182879377431906,
+            "r": 0.5580029368575624,
+            "f1": 0.6941821221785305,
+            "gold": 681,
+            "pred": 514
+          },
+          "IBAN": {
+            "p": 1.0,
+            "r": 0.5521628498727735,
+            "f1": 0.7114754098360656,
+            "gold": 393,
+            "pred": 217
+          },
+          "IP_ADDRESS": {
+            "p": 0.9276190476190476,
+            "r": 0.4099326599326599,
+            "f1": 0.5685931115002919,
+            "gold": 1188,
+            "pred": 525
+          },
+          "US_SSN": {
+            "p": 1.0,
+            "r": 0.3855109961190168,
+            "f1": 0.5564892623716152,
+            "gold": 773,
+            "pred": 298
+          },
+          "PHONE": {
+            "p": 0.19061286510214417,
+            "r": 0.5605759682224429,
+            "f1": 0.28449036159758095,
+            "gold": 2014,
+            "pred": 5923
+          },
+          "CN_ID_CARD": {
+            "p": 0.0,
+            "r": 0.0,
+            "f1": 0.0,
+            "gold": 391,
+            "pred": 22
+          },
+          "CN_USCC": null,
+          "CN_BANK_CARD": {
+            "p": 0.7665505226480837,
+            "r": 0.25365853658536586,
+            "f1": 0.3811808609889377,
+            "gold": 1230,
+            "pred": 287
+          }
+        },
+        "micro_supported": {
+          "p": 0.42862076905364954,
+          "r": 0.4539690281672967,
+          "f1": 0.4409308935867827
+        },
+        "other_type_preds": {
+          "IN_AADHAAR": 55,
+          "CRYPTO": 29,
+          "US_DRIVER_LICENSE": 22,
+          "US_BANK_ROUTING": 20,
+          "JP_MY_NUMBER": 8,
+          "FR_NIR": 5,
+          "DE_TAX_ID": 4
+        }
+      },
+      "clean_fp": {
+        "all_types": 28928,
+        "eval_types": 27414,
+        "top": {
+          "PHONE_NUMBER": 24754,
+          "IP_ADDRESS": 1434,
+          "CRYPTO": 1396,
+          "CN_BANK_CARD": 545,
+          "CREDIT_CARD": 541,
+          "CN_ID_CARD": 140
+        }
+      }
+    },
+    "pii-veil": {
+      "load_ms": 0.015333000000000001,
+      "max_rss_mb": 31.2,
+      "perf_labeled": {
+        "mb_s": 1.98,
+        "p50_us": 60.7,
+        "p99_us": 256.7,
+        "panics": 0,
+        "timed": "per-doc"
+      },
+      "perf_clean": {
+        "mb_s": 124.15,
+        "p50_us": 8.8,
+        "p99_us": 32.9,
+        "panics": 0,
+        "timed": "per-doc"
+      },
+      "accuracy": {
+        "per_entity": {
+          "EMAIL": {
+            "p": 1.0,
+            "r": 1.0,
+            "f1": 1.0,
+            "gold": 1531,
+            "pred": 1531
+          },
+          "CREDIT_CARD": {
+            "p": 0.9777947932618682,
+            "r": 1.0,
+            "f1": 0.9887727448703059,
+            "gold": 681,
+            "pred": 1306
+          },
+          "IBAN": {
+            "p": 1.0,
+            "r": 1.0,
+            "f1": 1.0,
+            "gold": 393,
+            "pred": 393
+          },
+          "IP_ADDRESS": {
+            "p": 0.9682151589242054,
+            "r": 1.0,
+            "f1": 0.9838509316770186,
+            "gold": 1188,
+            "pred": 1227
+          },
+          "US_SSN": {
+            "p": 0.8308351177730193,
+            "r": 0.5019404915912031,
+            "f1": 0.6258064516129033,
+            "gold": 773,
+            "pred": 467
+          },
+          "PHONE": {
+            "p": 0.8975903614457831,
+            "r": 0.2959285004965243,
+            "f1": 0.44510828976848393,
+            "gold": 2014,
+            "pred": 664
+          },
+          "CN_ID_CARD": null,
+          "CN_USCC": null,
+          "CN_BANK_CARD": null
+        },
+        "micro_supported": {
+          "p": 0.9615246957766643,
+          "r": 0.7259878419452888,
+          "f1": 0.8273185807630634
+        },
+        "other_type_preds": {}
+      },
+      "clean_fp": {
+        "all_types": 1537,
+        "eval_types": 1537,
+        "top": {
+          "IPV4": 1435,
+          "CREDIT_CARD": 102
+        }
+      }
+    },
+    "piiguard": {
+      "load_ms": 2.999917,
+      "max_rss_mb": 26.5,
+      "perf_labeled": {
+        "mb_s": 1.68,
+        "p50_us": 49.2,
+        "p99_us": 182.6,
+        "panics": 0,
+        "timed": "per-doc"
+      },
+      "perf_clean": {
+        "mb_s": 12.77,
+        "p50_us": 83.4,
+        "p99_us": 561.0,
+        "panics": 0,
+        "timed": "per-doc"
+      },
+      "accuracy": {
+        "per_entity": {
+          "EMAIL": {
+            "p": 1.0,
+            "r": 1.0,
+            "f1": 1.0,
+            "gold": 1531,
+            "pred": 1531
+          },
+          "CREDIT_CARD": {
+            "p": 0.9898255813953488,
+            "r": 1.0,
+            "f1": 0.9948867786705624,
+            "gold": 681,
+            "pred": 688
+          },
+          "IBAN": {
+            "p": 1.0,
+            "r": 1.0,
+            "f1": 1.0,
+            "gold": 393,
+            "pred": 393
+          },
+          "IP_ADDRESS": {
+            "p": 0.9406175771971497,
+            "r": 1.0,
+            "f1": 0.9694002447980417,
+            "gold": 1188,
+            "pred": 1263
+          },
+          "US_SSN": {
+            "p": 1.0,
+            "r": 0.7503234152652005,
+            "f1": 0.8573540280857354,
+            "gold": 773,
+            "pred": 580
+          },
+          "PHONE": {
+            "p": 1.0,
+            "r": 1.0,
+            "f1": 1.0,
+            "gold": 2014,
+            "pred": 2014
+          },
+          "CN_ID_CARD": {
+            "p": 1.0,
+            "r": 1.0,
+            "f1": 1.0,
+            "gold": 391,
+            "pred": 391
+          },
+          "CN_USCC": {
+            "p": 0.9892729439809297,
+            "r": 1.0,
+            "f1": 0.994607549430797,
+            "gold": 830,
+            "pred": 839
+          },
+          "CN_BANK_CARD": {
+            "p": 0.9815668202764977,
+            "r": 0.3463414634146341,
+            "f1": 0.5120192307692307,
+            "gold": 1230,
+            "pred": 434
+          }
+        },
+        "micro_supported": {
+          "p": 0.9878273699741793,
+          "r": 0.8896024803454767,
+          "f1": 0.9361454206478677
+        },
+        "other_type_preds": {}
+      },
+      "clean_fp": {
+        "all_types": 1545,
+        "eval_types": 1545,
+        "top": {
+          "IP_ADDRESS": 1435,
+          "CREDIT_CARD": 96,
+          "CN_USCC": 14
+        }
+      }
+    },
+    "presidio-rs": {
+      "load_ms": 13.964209,
+      "max_rss_mb": 140.7,
+      "perf_labeled": {
+        "mb_s": 0.47,
+        "p50_us": 251.8,
+        "p99_us": 939.6,
+        "panics": 0,
+        "timed": "per-doc"
+      },
+      "perf_clean": {
+        "mb_s": 1.26,
+        "p50_us": 898.5,
+        "p99_us": 5110.0,
+        "panics": 0,
+        "timed": "per-doc"
+      },
+      "accuracy": {
+        "per_entity": {
+          "EMAIL": {
+            "p": 1.0,
+            "r": 1.0,
+            "f1": 1.0,
+            "gold": 1531,
+            "pred": 1531
+          },
+          "CREDIT_CARD": {
+            "p": 0.876604146100691,
+            "r": 1.0,
+            "f1": 0.9342451341399264,
+            "gold": 681,
+            "pred": 1013
+          },
+          "IBAN": {
+            "p": 0.5333333333333333,
+            "r": 0.020356234096692113,
+            "f1": 0.03921568627450981,
+            "gold": 393,
+            "pred": 15
+          },
+          "IP_ADDRESS": {
+            "p": 0.9237029501525941,
+            "r": 0.7643097643097643,
+            "f1": 0.8364808843850761,
+            "gold": 1188,
+            "pred": 983
+          },
+          "US_SSN": {
+            "p": 1.0,
+            "r": 0.666235446313066,
+            "f1": 0.7996894409937888,
+            "gold": 773,
+            "pred": 515
+          },
+          "PHONE": {
+            "p": 0.38372093023255816,
+            "r": 0.868421052631579,
+            "f1": 0.532258064516129,
+            "gold": 2014,
+            "pred": 4558
+          },
+          "CN_ID_CARD": {
+            "p": 0.0,
+            "r": 0.0,
+            "f1": 0.0,
+            "gold": 391,
+            "pred": 51
+          },
+          "CN_USCC": null,
+          "CN_BANK_CARD": null
+        },
+        "micro_supported": {
+          "p": 0.6460881606277405,
+          "r": 0.7734901735762444,
+          "f1": 0.704072232533379
+        },
+        "other_type_preds": {
+          "JP_MYNUMBER": 753,
+          "US_BANK_NUMBER": 529,
+          "DATE_TIME": 323,
+          "VIN": 215,
+          "IN_AADHAAR": 93,
+          "UK_NHS": 79,
+          "SE_PERSONNUMMER": 57,
+          "CZ_BIRTH_NUMBER": 55
+        }
+      },
+      "clean_fp": {
+        "all_types": 34576,
+        "eval_types": 8911,
+        "top": {
+          "DATE_TIME": 15276,
+          "US_BANK_NUMBER": 7802,
+          "PHONE_NUMBER": 6624,
+          "IP_ADDRESS": 1435,
+          "VIN": 743,
+          "CREDIT_CARD": 701
+        }
+      }
+    },
+    "presidio-rules": {
+      "load_ms": 2009.4669169920962,
+      "max_rss_mb": 139.6,
+      "perf_labeled": {
+        "mb_s": 0.08,
+        "p50_us": 1481.1,
+        "p99_us": 4372.0,
+        "panics": 0,
+        "timed": "per-doc"
+      },
+      "perf_clean": {
+        "mb_s": 0.15,
+        "p50_us": 7848.1,
+        "p99_us": 24990.0,
+        "panics": 0,
+        "timed": "per-doc"
+      },
+      "accuracy": {
+        "per_entity": {
+          "EMAIL": {
+            "p": 1.0,
+            "r": 0.9229261920313521,
+            "f1": 0.9599184782608696,
+            "gold": 1531,
+            "pred": 1413
+          },
+          "CREDIT_CARD": {
+            "p": 0.9183040330920372,
+            "r": 1.0,
+            "f1": 0.9574123989218329,
+            "gold": 681,
+            "pred": 967
+          },
+          "IBAN": {
+            "p": 1.0,
+            "r": 1.0,
+            "f1": 1.0,
+            "gold": 393,
+            "pred": 393
+          },
+          "IP_ADDRESS": {
+            "p": 0.9406175771971497,
+            "r": 1.0,
+            "f1": 0.9694002447980417,
+            "gold": 1188,
+            "pred": 1263
+          },
+          "US_SSN": {
+            "p": 1.0,
+            "r": 1.0,
+            "f1": 1.0,
+            "gold": 773,
+            "pred": 773
+          },
+          "PHONE": {
+            "p": 0.7118712273641851,
+            "r": 0.8783515392254221,
+            "f1": 0.7863969771060236,
+            "gold": 2014,
+            "pred": 2485
+          },
+          "CN_ID_CARD": null,
+          "CN_USCC": null,
+          "CN_BANK_CARD": null
+        },
+        "micro_supported": {
+          "p": 0.8807238826432684,
+          "r": 0.9448328267477204,
+          "f1": 0.9116526825394213
+        },
+        "other_type_preds": {
+          "US_DRIVER_LICENSE": 3887,
+          "US_BANK_NUMBER": 3831,
+          "URL": 1678,
+          "DATE_TIME": 894,
+          "US_PASSPORT": 385,
+          "UK_NHS": 92,
+          "MEDICAL_LICENSE": 25
+        }
+      },
+      "clean_fp": {
+        "all_types": 70382,
+        "eval_types": 5170,
+        "top": {
+          "US_DRIVER_LICENSE": 30543,
+          "DATE_TIME": 15368,
+          "US_BANK_NUMBER": 15063,
+          "URL": 3385,
+          "PHONE_NUMBER": 3160,
+          "IP_ADDRESS": 1457
+        }
+      }
+    },
+    "presidio-spacy": {
+      "load_ms": 2529.0493329957826,
+      "max_rss_mb": 833.7,
+      "perf_labeled": {
+        "mb_s": 0.03,
+        "p50_us": 5034.0,
+        "p99_us": 11210.6,
+        "panics": 0,
+        "timed": "per-doc"
+      },
+      "perf_clean": {
+        "mb_s": 0.04,
+        "p50_us": 31322.0,
+        "p99_us": 87110.1,
+        "panics": 0,
+        "timed": "per-doc"
+      },
+      "accuracy": {
+        "per_entity": {
+          "EMAIL": {
+            "p": 1.0,
+            "r": 0.9229261920313521,
+            "f1": 0.9599184782608696,
+            "gold": 1531,
+            "pred": 1413
+          },
+          "CREDIT_CARD": {
+            "p": 0.9183040330920372,
+            "r": 1.0,
+            "f1": 0.9574123989218329,
+            "gold": 681,
+            "pred": 967
+          },
+          "IBAN": {
+            "p": 1.0,
+            "r": 1.0,
+            "f1": 1.0,
+            "gold": 393,
+            "pred": 393
+          },
+          "IP_ADDRESS": {
+            "p": 0.9406175771971497,
+            "r": 1.0,
+            "f1": 0.9694002447980417,
+            "gold": 1188,
+            "pred": 1263
+          },
+          "US_SSN": {
+            "p": 1.0,
+            "r": 1.0,
+            "f1": 1.0,
+            "gold": 773,
+            "pred": 773
+          },
+          "PHONE": {
+            "p": 0.7118712273641851,
+            "r": 0.8783515392254221,
+            "f1": 0.7863969771060236,
+            "gold": 2014,
+            "pred": 2485
+          },
+          "CN_ID_CARD": null,
+          "CN_USCC": null,
+          "CN_BANK_CARD": null
+        },
+        "micro_supported": {
+          "p": 0.8807238826432684,
+          "r": 0.9448328267477204,
+          "f1": 0.9116526825394213
+        },
+        "other_type_preds": {
+          "DATE_TIME": 4582,
+          "US_DRIVER_LICENSE": 3887,
+          "US_BANK_NUMBER": 3831,
+          "URL": 1678,
+          "US_PASSPORT": 385,
+          "UK_NHS": 92,
+          "PERSON": 76,
+          "LOCATION": 39
+        }
+      },
+      "clean_fp": {
+        "all_types": 89871,
+        "eval_types": 5170,
+        "top": {
+          "DATE_TIME": 31674,
+          "US_DRIVER_LICENSE": 30543,
+          "US_BANK_NUMBER": 15063,
+          "URL": 3385,
+          "PHONE_NUMBER": 3160,
+          "PERSON": 1856
+        }
+      }
+    },
+    "redacter": {
+      "load_ms": null,
+      "max_rss_mb": 44.7,
+      "perf_labeled": {
+        "mb_s": 0.34,
+        "p50_us": null,
+        "p99_us": null,
+        "panics": 0,
+        "timed": "process-wall"
+      },
+      "perf_clean": {
+        "mb_s": 4.03,
+        "p50_us": null,
+        "p99_us": null,
+        "panics": 0,
+        "timed": "process-wall"
+      },
+      "accuracy": {
+        "per_entity": {
+          "EMAIL": {
+            "p": 1.0,
+            "r": 1.0,
+            "f1": 1.0,
+            "gold": 1531,
+            "pred": 1531
+          },
+          "CREDIT_CARD": {
+            "p": 0.9237472766884531,
+            "r": 1.0,
+            "f1": 0.9603624009060022,
+            "gold": 681,
+            "pred": 1836
+          },
+          "IBAN": {
+            "p": 1.0,
+            "r": 1.0,
+            "f1": 1.0,
+            "gold": 393,
+            "pred": 393
+          },
+          "IP_ADDRESS": {
+            "p": 0.9406175771971497,
+            "r": 1.0,
+            "f1": 0.9694002447980417,
+            "gold": 1188,
+            "pred": 1263
+          },
+          "US_SSN": {
+            "p": 1.0,
+            "r": 0.5019404915912031,
+            "f1": 0.6683893195521102,
+            "gold": 773,
+            "pred": 388
+          },
+          "PHONE": {
+            "p": 0.8936842105263157,
+            "r": 0.4215491559086395,
+            "f1": 0.5728744939271254,
+            "gold": 2014,
+            "pred": 950
+          },
+          "CN_ID_CARD": {
+            "p": 1.0,
+            "r": 0.9053708439897699,
+            "f1": 0.9503355704697987,
+            "gold": 391,
+            "pred": 354
+          },
+          "CN_USCC": null,
+          "CN_BANK_CARD": null
+        },
+        "micro_supported": {
+          "p": 0.9529411764705882,
+          "r": 0.7723425620427485,
+          "f1": 0.8531895517029887
+        },
+        "other_type_preds": {
+          "greek-amka": 5,
+          "polish-pesel": 3,
+          "latvian-personas-kods": 2,
+          "austrian-svnr": 1,
+          "baltic-personal-code": 1
+        }
+      },
+      "clean_fp": {
+        "all_types": 2043,
+        "eval_types": 2012,
+        "top": {
+          "ipv4": 1435,
+          "payment-card": 424,
+          "ipv6": 141,
+          "austrian-svnr": 13,
+          "phone-international": 12,
+          "swedish-personnummer": 9
+        }
+      }
+    },
+    "scrubadub": {
+      "load_ms": 4010.9521669946844,
+      "max_rss_mb": 221.8,
+      "perf_labeled": {
+        "mb_s": 0.69,
+        "p50_us": 164.8,
+        "p99_us": 645.5,
+        "panics": 0,
+        "timed": "per-doc"
+      },
+      "perf_clean": {
+        "mb_s": 1.17,
+        "p50_us": 1015.7,
+        "p99_us": 3115.7,
+        "panics": 0,
+        "timed": "per-doc"
+      },
+      "accuracy": {
+        "per_entity": {
+          "EMAIL": {
+            "p": 0.8576252110298256,
+            "r": 0.9954278249510125,
+            "f1": 0.9214026602176543,
+            "gold": 1531,
+            "pred": 1777
+          },
+          "CREDIT_CARD": {
+            "p": 0.8306709265175719,
+            "r": 0.38179148311306904,
+            "f1": 0.523138832997988,
+            "gold": 681,
+            "pred": 313
+          },
+          "IBAN": null,
+          "IP_ADDRESS": null,
+          "US_SSN": {
+            "p": 1.0,
+            "r": 0.5019404915912031,
+            "f1": 0.6683893195521102,
+            "gold": 773,
+            "pred": 388
+          },
+          "PHONE": {
+            "p": 0.9796696315120712,
+            "r": 0.7656405163853028,
+            "f1": 0.8595317725752508,
+            "gold": 2014,
+            "pred": 1574
+          },
+          "CN_ID_CARD": null,
+          "CN_USCC": null,
+          "CN_BANK_CARD": null
+        },
+        "micro_supported": {
+          "p": 0.9165844027640672,
+          "r": 0.7429485897179436,
+          "f1": 0.8206827974809414
+        },
+        "other_type_preds": {
+          "unknown": 10
+        }
+      },
+      "clean_fp": {
+        "all_types": 440,
+        "eval_types": 338,
+        "top": {
+          "phone": 322,
+          "twitter": 55,
+          "url": 47,
+          "email": 10,
+          "credit_card": 6
+        }
+      }
+    }
+  }
+}

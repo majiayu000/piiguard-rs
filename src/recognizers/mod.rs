@@ -4,6 +4,7 @@ mod bank_card;
 mod cn_id;
 mod cn_phone;
 mod cn_uscc;
+mod context;
 mod credit_card;
 mod email;
 mod iban;
@@ -45,11 +46,6 @@ impl Finding {
 pub trait Recognizer: Send + Sync {
     fn entity(&self) -> &str;
 
-    /// 供 `Analyzer` 放进 `RegexSet` 做一次性预筛的正则。返回 `None` 表示每次都调用 `find`。
-    fn pattern(&self) -> Option<&str> {
-        None
-    }
-
     fn find(&self, text: &str, out: &mut Vec<Finding>);
 }
 
@@ -86,6 +82,26 @@ pub fn builtin(entity: &str) -> Result<Option<PatternRecognizer>, regex::Error> 
     };
     Ok(Some(r))
 }
+
+/// 订单号、流水号等字段名：数字串紧跟在它们后面时多半不是 PII（负向上下文）。
+pub(crate) const ID_FIELD_WORDS: &[&str] = &[
+    "order",
+    "order_id",
+    "orderid",
+    "order no",
+    "tracking",
+    "trace_id",
+    "txn",
+    "invoice",
+    "订单",
+    "订单号",
+    "单号",
+    "流水号",
+    "运单号",
+];
+
+/// 负向上下文命中时的扣分：足以把任何内置识别器的基础分压到默认阈值以下。
+pub(crate) const ID_FIELD_PENALTY: f32 = 0.5;
 
 /// 去掉空格和连字符，供卡号类校验使用。
 pub(crate) fn strip_separators(s: &str) -> String {

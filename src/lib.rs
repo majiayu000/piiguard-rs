@@ -19,6 +19,7 @@ mod config;
 mod error;
 mod recognizers;
 mod redact;
+mod stream;
 mod vault;
 
 pub use analyzer::{Analyzer, AnalyzerBuilder, DEFAULT_THRESHOLD};
@@ -27,4 +28,5 @@ pub use config::{Config, CustomRule, DenyRule};
 pub use error::Error;
 pub use recognizers::{BUILTIN_ENTITIES, Finding, PatternRecognizer, Recognizer};
 pub use redact::{Action, redact, restore};
+pub use stream::StreamRestorer;
 pub use vault::{Vault, VaultEntry};

@@ -1,4 +1,5 @@
 use super::credit_card::CARD_PATTERN;
+use super::{ID_FIELD_PENALTY, ID_FIELD_WORDS};
 use super::{PatternRecognizer, strip_separators};
 use crate::checksum::luhn_valid;
 
@@ -7,7 +8,12 @@ const CONTEXT: &[&str] = &[
     "卡号",
     "账号",
     "帐号",
+    "账户",
     "开户",
+    "转账",
+    "汇款",
+    "收款",
+    "打款",
     "借记卡",
     "储蓄卡",
     "bank",
@@ -28,5 +34,6 @@ fn validate(s: &str) -> Option<f32> {
 pub fn recognizer() -> Result<PatternRecognizer, regex::Error> {
     Ok(PatternRecognizer::new("CN_BANK_CARD", CARD_PATTERN, 0.35)?
         .validator(validate)
-        .context(CONTEXT, 0.4))
+        .context(CONTEXT, 0.4)
+        .negative_context(ID_FIELD_WORDS, ID_FIELD_PENALTY))
 }

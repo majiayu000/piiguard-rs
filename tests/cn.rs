@@ -83,3 +83,16 @@ fn bank_card_lookalikes_miss() {
     assert_none("订单号 6217000000000000001 已发货");
     assert!(hits("流水 20261126123456789").is_empty());
 }
+
+#[test]
+fn uscc_with_invalid_dept_category_misses() {
+    // "94" 不是 GB 32100 允许的登记管理部门码 + 机构类别码组合，即使校验位正确也不报
+    assert_none(&support::cn_uscc("94110108MA01ABCD1"));
+}
+
+#[test]
+fn bank_card_transfer_context_hits() {
+    let c = unionpay();
+    assert_single(&format!("转账至 {c} 即可"), "CN_BANK_CARD", &c);
+    assert_single(&format!("对公账户 {c}"), "CN_BANK_CARD", &c);
+}

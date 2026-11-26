@@ -1,4 +1,5 @@
 use super::PatternRecognizer;
+use super::{ID_FIELD_PENALTY, ID_FIELD_WORDS};
 use crate::checksum::gb11643_valid;
 
 const PATTERN: &str = concat!(
@@ -40,5 +41,6 @@ fn validate(s: &str) -> Option<f32> {
 pub fn recognizer() -> Result<PatternRecognizer, regex::Error> {
     Ok(PatternRecognizer::new("CN_ID_CARD", PATTERN, 0.9)?
         .validator(validate)
-        .context(CONTEXT, 0.1))
+        .context(CONTEXT, 0.1)
+        .negative_context(ID_FIELD_WORDS, ID_FIELD_PENALTY))
 }

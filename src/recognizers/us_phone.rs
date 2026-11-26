@@ -1,4 +1,5 @@
 use super::PatternRecognizer;
+use super::{ID_FIELD_PENALTY, ID_FIELD_WORDS};
 
 const PATTERN: &str = r"(?:\+1[ .\-]?)?(?:\([0-9]{3}\) ?|[0-9]{3}[ .\-]?)[0-9]{3}[ .\-]?[0-9]{4}";
 
@@ -25,5 +26,6 @@ fn validate(s: &str) -> Option<f32> {
 pub fn recognizer() -> Result<PatternRecognizer, regex::Error> {
     Ok(PatternRecognizer::new("US_PHONE", PATTERN, 0.5)?
         .validator(validate)
-        .context(CONTEXT, 0.3))
+        .context(CONTEXT, 0.3)
+        .negative_context(ID_FIELD_WORDS, ID_FIELD_PENALTY))
 }

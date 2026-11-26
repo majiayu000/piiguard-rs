@@ -42,7 +42,25 @@ assert_eq!(restore(&masked, &vault), text);
 - `Action::Mask { ch }`：逐字符替换，字符数不变。
 - `Action::Replace`：`<ENTITY_n>`，一次调用内同值同号，不可还原。
 - `Action::Pseudonymize(&mut Vault)`：同一 `Vault` 内同值始终同号，可还原。
-- 自定义识别器：实现 `Recognizer` trait，或用 `PatternRecognizer::new(entity, pattern, score)?.validator(f).context(&words, boost)`，再 `.with_recognizer(r)`。
+- 自定义识别器：实现 `Recognizer` trait，或用 `PatternRecognizer::new(entity, pattern, score)?.validator(f).context(&words, boost).negative_context(&words, penalty)`，再 `.with_recognizer(r)`。
+
+### 流式还原（SSE）
+
+模型响应按 chunk 到达时，占位符可能被切成 `<EMA` + `IL_1>`。`StreamRestorer` 只扣住末尾"恰好是某个已知占位符前缀"的一小段，其余立即输出：
+
+```rust
+use piiguard::StreamRestorer;
+
+let mut r = StreamRestorer::new(&vault);
+let mut out = String::new();
+for chunk in ["回复 <EMA", "IL_1>。"] {
+    out.push_str(&r.push(chunk)); // 每个 chunk 立即返回可输出的部分
+}
+out.push_str(&r.finish());
+assert_eq!(out, "回复 alice@example.com。");
+```
+
+任意切分下，所有输出拼起来都等于对完整文本调用 `restore`（`tests/stream.rs` 用 proptest 验证）。
 
 ## 内置识别器
 
@@ -57,8 +75,10 @@ assert_eq!(restore(&masked, &vault), text);
 | `US_PHONE` | NANP：区号、交换码首位 2–9 且非 N11 | 有格式 0.5 / 纯 10 位 0.3 | +0.3 |
 | `CN_ID_CARD` | 省级区划码 + 出生日期合法 + GB 11643 校验位 | 0.9 | +0.1 |
 | `CN_PHONE` | 已分配号段前三位，支持 `+86`/`0086` 和空格/连字符分组 | 0.55 | +0.35 |
-| `CN_USCC` | 区划码前两位 + GB 32100 校验位 | 0.85 | +0.1 |
+| `CN_USCC` | 登记管理部门码与机构类别码组合（GB 32100 表 1/2）+ 区划码前两位 + 校验位 | 0.85 | +0.1 |
 | `CN_BANK_CARD` | 16–19 位 + Luhn；`62` 开头 0.45，其余 0.35 | 0.35–0.45 | +0.4 |
+
+负向上下文：数字类识别器的命中紧跟在 `order`、`tracking`、`订单号`、`流水号` 等字段名之后时扣 0.5 分；IP 紧跟在 `ver`、`version`、`build`、`版本` 之后时扣 0.5 分（四段版本号在字面上就是合法 IPv4）。只看紧挨着的那个完整单词，所以 `server 10.0.0.1` 不受影响。
 
 `CN_BANK_CARD`、纯数字 `US_SSN`/`US_PHONE` 的基础分刻意低于默认阈值：随机数字串有 1/10 概率通过 Luhn，没有"银行卡/卡号/ssn/phone"等上下文词时不报。
 
@@ -119,13 +139,13 @@ cargo bench --bench analyze
 - 每个识别器都有三类测试：合法样本命中、校验位/结构错误不命中、相似但非 PII（订单号、时间戳、版本号等）不命中。
 - `tests/roundtrip.rs` 用 proptest 验证 `restore(redact(x, Pseudonymize)) == x`（512 例，含任意 Unicode、合成 PII、字面 `<EMAIL_1>`）。
 - `tests/false_positive.rs`：在本仓库 `Cargo.lock` + 3000 行合成网关日志上，默认阈值命中数为 0。这只是一个小基线，不代表真实流量上的误报率。
-- `benches/analyze.rs` 是 criterion 基准（合成日志语料）。**尚未与 presidio 做同语料实测对比，因此这里不给任何吞吐数字。**
+- `benches/analyze.rs` 是 criterion 微基准。与 presidio 等 9 个工具的同语料对比见 [docs/benchmark.md](docs/benchmark.md)（`bench/run.sh` 一条命令复现），功能对比见 [docs/comparison.md](docs/comparison.md)。
 
 ## 限制（v0.1）
 
 - 不做密钥/API key 格式识别（`sk-`、`ghp_`、`AKIA` 等），也不做 NER（人名、地址）；`Recognizer` trait 留作扩展点。
 - `URL_TOKEN` 只按参数名识别，参数名不在列表里就不会报。
-- IPv4 在点分版本号里（如 `1.2.3.4.5` 中的 `1.2.3.4`）会误报；SSN、电话号码没有校验位，只能靠号段规则和上下文词。
+- 不带 `ver`/`version`/`版本` 等字段名的四段版本号仍会被当成 IPv4（如 `1.2.3.4.5` 中的 `1.2.3.4`）；SSN、电话号码没有校验位，只能靠号段规则和上下文词。
 - 正则是最左优先、不回溯到校验函数：候选串如果被贪婪匹配吞进了相邻内容（如带空格的 IBAN 后面紧跟大写单词），校验失败后不会再尝试更短的子串，结果是漏报。
 - 上下文词只看命中**之前** 32 个字符。
 - `Vault` 只在内存里；新分配占位符时会跳过当前原文里已出现的同名占位符，但如果同一个 `Vault` 跨多段文本复用，后来的文本里字面出现的旧占位符会在 `restore` 时被替换。

@@ -1,12 +1,10 @@
 use regex::Regex;
 
+use super::context::{preceded_by, window_has};
 use super::{Finding, Recognizer};
 
 /// 校验函数：输入命中的原文，合法时返回基础分，不合法返回 `None`。
 pub type Validator = fn(&str) -> Option<f32>;
-
-/// 上下文窗口：在命中位置之前最多看这么多个字符。
-const CONTEXT_WINDOW_CHARS: usize = 32;
 
 /// 正则 + 校验函数 + 上下文词的通用识别器。内置识别器、拒绝列表、自定义识别器都基于它。
 ///
@@ -20,6 +18,8 @@ pub struct PatternRecognizer {
     validator: Option<Validator>,
     context: Vec<String>,
     context_boost: f32,
+    negative: Vec<String>,
+    negative_penalty: f32,
     bounded: bool,
 }
 
@@ -32,6 +32,8 @@ impl PatternRecognizer {
             validator: None,
             context: Vec::new(),
             context_boost: 0.0,
+            negative: Vec::new(),
+            negative_penalty: 0.0,
             bounded: true,
         })
     }
@@ -46,6 +48,14 @@ impl PatternRecognizer {
     pub fn context<S: AsRef<str>>(mut self, words: &[S], boost: f32) -> Self {
         self.context = words.iter().map(|w| w.as_ref().to_lowercase()).collect();
         self.context_boost = boost;
+        self
+    }
+
+    /// 命中前紧挨着（跳过空格、`=`、`:` 等分隔符）任一负向词时，分数减 `penalty`。
+    /// 用于 `ver=1.2.3.4`、`order=4111…` 这类"长得像 PII 但字段名说明不是"的场景。
+    pub fn negative_context<S: AsRef<str>>(mut self, words: &[S], penalty: f32) -> Self {
+        self.negative = words.iter().map(|w| w.as_ref().to_lowercase()).collect();
+        self.negative_penalty = penalty;
         self
     }
 
@@ -65,20 +75,6 @@ impl PatternRecognizer {
             && !after.is_some_and(|c| c.is_ascii_alphanumeric())
     }
 
-    fn has_context(&self, text: &str, start: usize) -> bool {
-        if self.context.is_empty() {
-            return false;
-        }
-        let prefix = &text[..start];
-        let from = prefix
-            .char_indices()
-            .rev()
-            .nth(CONTEXT_WINDOW_CHARS - 1)
-            .map_or(0, |(i, _)| i);
-        let window = prefix[from..].to_lowercase();
-        self.context.iter().any(|w| window.contains(w.as_str()))
-    }
-
     fn push(&self, text: &str, start: usize, end: usize, out: &mut Vec<Finding>) {
         if start == end || !self.boundary_ok(text, start, end) {
             return;
@@ -90,11 +86,13 @@ impl PatternRecognizer {
             },
             None => self.score,
         };
-        let score = if self.has_context(text, start) {
-            (base + self.context_boost).min(1.0)
-        } else {
-            base
-        };
+        let mut score = base;
+        if window_has(text, start, &self.context) {
+            score = (score + self.context_boost).min(1.0);
+        }
+        if preceded_by(text, start, &self.negative) {
+            score -= self.negative_penalty;
+        }
         out.push(Finding::new(self.entity.as_str(), start, end, score));
     }
 }
@@ -102,10 +100,6 @@ impl PatternRecognizer {
 impl Recognizer for PatternRecognizer {
     fn entity(&self) -> &str {
         &self.entity
-    }
-
-    fn pattern(&self) -> Option<&str> {
-        Some(self.regex.as_str())
     }
 
     fn find(&self, text: &str, out: &mut Vec<Finding>) {

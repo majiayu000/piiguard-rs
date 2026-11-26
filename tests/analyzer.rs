@@ -95,7 +95,7 @@ impl Recognizer for EveryX {
 }
 
 #[test]
-fn recognizer_without_pattern_is_always_called() {
+fn custom_recognizer_is_called() {
     let a = Analyzer::builder().with_recognizer(EveryX).build().unwrap();
     assert_eq!(a.analyze("axbx").len(), 2);
 }

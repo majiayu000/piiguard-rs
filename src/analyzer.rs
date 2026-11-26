@@ -1,8 +1,9 @@
-//! `Analyzer`：用 `RegexSet` 一次扫描预筛，再只调用可能命中的识别器，最后按阈值过滤、去重叠。
+//! `Analyzer`：逐个调用识别器，再按阈值过滤、去重叠。
+//!
+//! 不用 `RegexSet` 预筛：实测这批以数字计数重复为主的模式合成一个 `RegexSet` 后，
+//! 仅 `matches()` 就只有 16–24 MB/s，而各自独立扫描合计约 85 MB/s（见 docs/benchmark.md）。
 
 use std::collections::HashSet;
-
-use regex::RegexSet;
 
 use crate::error::Error;
 use crate::recognizers::{BUILTIN_ENTITIES, Finding, PatternRecognizer, Recognizer, builtin};
@@ -12,11 +13,6 @@ pub const DEFAULT_THRESHOLD: f32 = 0.5;
 
 pub struct Analyzer {
     recognizers: Vec<Box<dyn Recognizer>>,
-    set: RegexSet,
-    /// `set` 中第 k 个模式属于哪个识别器。
-    set_owner: Vec<usize>,
-    /// 没有提供 `pattern()` 的识别器，每次都要调用。
-    unindexed: Vec<usize>,
     threshold: f32,
     allow: HashSet<String>,
 }
@@ -43,14 +39,8 @@ impl Analyzer {
     /// 返回去重叠、按位置排序、分数 ≥ 阈值的命中。
     pub fn analyze(&self, text: &str) -> Vec<Finding> {
         let mut raw = Vec::new();
-        // 每个识别器至多贡献一个模式，所以 owner 不会重复。
-        let hit = self
-            .set
-            .matches(text)
-            .into_iter()
-            .map(|k| self.set_owner[k]);
-        for i in hit.chain(self.unindexed.iter().copied()) {
-            self.recognizers[i].find(text, &mut raw);
+        for r in &self.recognizers {
+            r.find(text, &mut raw);
         }
         raw.retain(|f| f.score >= self.threshold && !self.allow.contains(&text[f.start..f.end]));
         let mut out = remove_overlaps(raw);
@@ -110,21 +100,8 @@ impl AnalyzerBuilder {
         }
         recognizers.extend(self.custom);
 
-        let (mut patterns, mut set_owner, mut unindexed) = (Vec::new(), Vec::new(), Vec::new());
-        for (i, r) in recognizers.iter().enumerate() {
-            match r.pattern() {
-                Some(p) => {
-                    patterns.push(p.to_string());
-                    set_owner.push(i);
-                }
-                None => unindexed.push(i),
-            }
-        }
         Ok(Analyzer {
-            set: RegexSet::new(&patterns)?,
             recognizers,
-            set_owner,
-            unindexed,
             threshold: self.threshold,
             allow: self.allow,
         })
